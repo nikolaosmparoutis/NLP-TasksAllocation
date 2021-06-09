@@ -1,0 +1,5 @@
+/exam*.py
+/venv/
+/__pycache__/
+/.env/
+/.idea/
