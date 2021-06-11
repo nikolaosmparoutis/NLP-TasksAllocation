@@ -14,16 +14,6 @@ txt_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal/t
 datasets_name_list = ['Projects_datasets.xlsx', 'Projects2.xlsx']
 
 
-def _xslx_to_csv_and_store(datasets_name_list):
-    for file_name in datasets_name_list:
-        xl_file = os.path.join(files_path, file_name)
-        read_file = pd.read_excel(xl_file)
-        prefix_name = os.path.splitext(file_name)[0]
-        csv_path = os.path.join(path_storing, prefix_name + '.csv')
-        read_file.to_csv(csv_path, index=None, header=True)
-    return
-
-
 class ProcessDatasetProject(DataIface):
 
     def __init__(self, datasets_name_list, files_path, path_storing):
@@ -99,6 +89,15 @@ class ProcessDatasetProject(DataIface):
 
     ''' Convert all the xslx to csv and store them to 'internal' directory '''
 
+    def _xslx_to_csv_and_store(self):
+        for file_name in self.datasets_name_list:
+            xl_file = os.path.join(files_path, file_name)
+            read_file = pd.read_excel(xl_file)
+            prefix_name = os.path.splitext(file_name)[0]
+            csv_path = os.path.join(path_storing, prefix_name + '.csv')
+            read_file.to_csv(csv_path, index=None, header=True)
+        return
+
     def _df_to_txt(self):
         for file_name in os.listdir(txt_dir):
             if file_name is not None:
@@ -112,7 +111,8 @@ class ProcessDatasetProject(DataIface):
         else:
             print("CSV columns stored to txt files.")
 
-    """ store csv to txt """
+    """ store csv to txt and
+     df with filtered data to txt"""
 
     def dump_data(self, full_file_path):
-        return _xslx_to_csv_and_store, self._df_to_txt
+        return self._xslx_to_csv_and_store, self._df_to_txt
