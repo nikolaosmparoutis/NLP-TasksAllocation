@@ -7,12 +7,21 @@ import pandas as pd
 import os.path
 from ProcessDatasetInterface import FormalProcessDatasetInterface as DataIface
 
-
 files_path = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/raw'
 path_storing = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal'
 txt_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal/txt/'
 
 datasets_name_list = ['Projects_datasets.xlsx', 'Projects2.xlsx']
+
+
+def _xslx_to_csv_and_store(datasets_name_list):
+    for file_name in datasets_name_list:
+        xl_file = os.path.join(files_path, file_name)
+        read_file = pd.read_excel(xl_file)
+        prefix_name = os.path.splitext(file_name)[0]
+        csv_path = os.path.join(path_storing, prefix_name + '.csv')
+        read_file.to_csv(csv_path, index=None, header=True)
+    return
 
 
 class ProcessDatasetProject(DataIface):
@@ -24,25 +33,16 @@ class ProcessDatasetProject(DataIface):
         self._df_merged_columns = None
 
     # a client to implement the product interface
-    def client_process(self, datasets_name_list, format):
-        client_process = self._get_dataset_type(format)
-        return client_process(datasets_name_list)
+    def client_process(self, datasets_name_list, data_format):
+        dataset_type = self._get_dataset_type(format)
+        return dataset_type(datasets_name_list)
 
     # creator
-    def _get_dataset_type(self, format):
-        if format == 'xlsx':
-            return self._xslx_to_csv_and_store
+    def _get_dataset_type(self, data_format):
+        if data_format == 'xlsx':
+            return self.dump_data
         else:
             raise ValueError(format)
-
-    ''' Convert all the xslx to csv and store them to 'internal' directory '''
-    def _xslx_to_csv_and_store(self, datasets_name_list, files_path, path_storing):
-        for file_name in datasets_name_list:
-            xl_file = os.path.join(files_path, file_name)
-            read_file = pd.read_excel(xl_file)
-            prefix_name = os.path.splitext(file_name)[0]
-            csv_path = os.path.join(path_storing, prefix_name + '.csv')
-            read_file.to_csv(csv_path, index=None, header=True)
 
     '''Create a dictionary of dataframes reading all the csv files.
         Return the dictionary.'''
@@ -60,21 +60,6 @@ class ProcessDatasetProject(DataIface):
             assert isinstance(d[df_name], pd.DataFrame)
             assert d[df_name].empty == False
         return d
-
-    # def extract_dataset(self, full_file_path):
-
-    def csv_to_txt(self, txt_direc, data):
-        for file_name in os.listdir(txt_direc):
-            if file_name is None:
-                file_dir = os.path.join(txt_direc, file_name)
-                with open(file_dir + '.txt', "w") as file:
-                    file.write(data)
-            else:
-                pass
-        if os.listdir(self.path_storing) is None:
-            print("Not acceptable file format for data processing.")
-        else:
-            print("CSV columns stored to txt files.")
 
     '''
     Now we want to take as much as useful data in a form of text as possible. 
@@ -98,13 +83,13 @@ class ProcessDatasetProject(DataIface):
 
     @filter_data.setter
     def filter_data(self, proj_id='id', keep_columns=['title', 'objective']):
-        short_header = [first_n[0:5] for first_n in keep_columns]
+        short_header = [first_n[0:5] for first_n in keep_columns]  # create header:concat first 5 letters of each column
         column_name = '_'.join(short_header)
         all_columns = [proj_id] + [column_name]
         self._df_merged_columns = pd.DataFrame(columns=all_columns)
         create_data = [proj_id] + keep_columns
 
-        dic_project = ProcessDatasetProject._read_CSVs(self, datasets_name_list, self.path_storing)
+        dic_project = ProcessDatasetProject._read_CSVs(self, self.datasets_name_list, self.path_storing)
 
         for key, value in dic_project.items():
             df = dic_project[key][create_data]
@@ -112,3 +97,22 @@ class ProcessDatasetProject(DataIface):
             self._df_merged_columns.to_csv(txt_dir + 'merged_project_text')
             self._df_merged_columns[proj_id] = df[proj_id]
 
+    ''' Convert all the xslx to csv and store them to 'internal' directory '''
+
+    def _df_to_txt(self):
+        for file_name in os.listdir(txt_dir):
+            if file_name is not None:
+                file_dir = os.path.join(txt_dir, file_name)
+                with open(file_dir + '.txt', "w") as file:
+                    file.write(self._df_merged_columns)
+            else:
+                pass
+        if os.listdir(self.path_storing) is None:
+            print("Not acceptable file format for data processing.")
+        else:
+            print("CSV columns stored to txt files.")
+
+    """ store csv to txt """
+
+    def dump_data(self, full_file_path):
+        return _xslx_to_csv_and_store, self._df_to_txt
