@@ -2,7 +2,7 @@ import spacy
 
 nlp = spacy.load('en_core_web_sm')
 
-from src.process_data.process_dataset import ProcessDatasetProject
+from src.process_data.process_dataset import Builder_ProcessDatasetProject
 from src.process_data.preprocess_user_data import UserDataProcessing
 import os
 
@@ -14,7 +14,7 @@ store_path = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/interna
 
 datasets_name = ['Projects_datasets.xlsx', 'Projects2.xlsx']
 
-p = ProcessDatasetProject()
+p = Builder_ProcessDatasetProject()
 u = UserDataProcessing()
 
 
