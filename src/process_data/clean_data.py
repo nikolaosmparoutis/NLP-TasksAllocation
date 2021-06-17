@@ -9,10 +9,11 @@ import spacy
 nlp = spacy.load('en_core_web_sm')
 
 
-def cleaning_data(self, text):
+def cleaning_data(text):
     '''Revove special characters, emails, http links, numbers, stop words'''
 
     def _clean_text(text):
+        """ Removes stopwords, special chars and tokkenizes a text"""
         from nltk.corpus import stopwords
         from nltk.tokenize import word_tokenize
         import re
@@ -28,23 +29,21 @@ def cleaning_data(self, text):
                 str_clean += ' ' + w
         return str_clean
 
-    '''
-        Use of Lemmatization , it helps to topic modeling while stemming would result in unusable meaning.
-    '''
-
     def _lemmatize(text):
+        """
+        Use of Lemmatization , it helps to topic modeling while stemming would result in unusable meaning.
+        """
         document = nlp(text)
         str_lemma = ''
         for token in document:
             str_lemma += ' ' + token.lemma_
         return str_lemma
 
-    '''
-    Clean the text from the entities as person names, dates, locations..
-    and keep words with more than 2 chars.
-    '''
-
     def _remove_entities(text):
+        '''
+        Clean the text from the entities as person names, dates, locations..
+        and keep words with more than 2 chars.
+        '''
         doc_lemma = nlp(text)
         banned_words = [e.text for e in doc_lemma.ents if len(e.text) > 2]
         print('banned_words')

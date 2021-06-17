@@ -5,19 +5,13 @@
 
 import pandas as pd
 import os.path
-from ProcessDatasetInterface import FormalProcessDatasetInterface as DataIface
-
-files_path = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/raw'
-path_data_internal = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal'
-path_internal_txt = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal/txt/'
-
-datasets_name_list = ['Projects_datasets.xlsx', 'Projects2.xlsx']
-
-'''Create a dictionary of dataframes reading all the csv files.
-      Return the dictionary.'''
+import preprocess_datasets_interface as DataIface
 
 
 def _read_CSVs(store_path, datasets_names):
+    """Create a dictionary of dataframes reading all the csv files.
+        Return the dictionary."""
+
     d = {}
     for file_name in datasets_names:
         prefix_name = os.path.splitext(file_name)[0]
@@ -29,7 +23,7 @@ def _read_CSVs(store_path, datasets_names):
     return d
 
 
-class ConcreteBuilderProcessProjectData(DataIface):
+class BuilderPreprocessDataset(DataIface.BuilderPreprocessDataset):
 
     def __init__(self, datasets_name_list, files_path, path_data_internal, path_data_internal_txt):
         self.datasets_name_list = datasets_name_list
@@ -40,14 +34,13 @@ class ConcreteBuilderProcessProjectData(DataIface):
         self._reset()
 
     @classmethod
-    def _reset(cls):
+    def _reset(cls):  # TODO : make it clear
         cls.instance = None
-        cls.instance = ConcreteBuilderProcessProjectData(
-                        None,
-                        None,
-                        None,
-                        None)
-
+        cls.instance = BuilderPreprocessDataset(
+            None,
+            None,
+            None,
+            None)
 
     def client_load_datasource(self, data_format):
         dataset_type = self._get_dataset_type(data_format)
@@ -60,24 +53,23 @@ class ConcreteBuilderProcessProjectData(DataIface):
         else:
             raise ValueError(data_format)
 
-    '''
-    Now we want to take as much as useful data in a form of text as possible. 
-    This method from a selection of columns concatenates their text into one column, 
-    then stores the merged text along with the project id in a new dataframe
-    and extracts to a txt file.
-    
-    Input:
-        dic_data: is the dictionary with the dataframes, one dataframe per file
-        proj_id: the unique id per project
-        keep_columns: a tuple with the columns from the files that we want to concatenate their texts. 
-                    Texts separeted with '. '.  
-    Output: 
-        a data frame: id, column names concatenated on first five letters.
-        example: 'title', 'objective' -> 'title_objec'
-    '''
-
     @property
     def filter_data(self):
+        """
+            Now we want to take as much as useful data in a form of text as possible.
+            This method from a selection of columns concatenates their text into one column,
+            then stores the merged text along with the project id in a new dataframe
+            and extracts to a txt file.
+
+            Input:
+                dic_data: is the dictionary with the dataframes, one dataframe per file
+                proj_id: the unique id per project
+                keep_columns: a tuple with the columns from the files that we want to concatenate their texts.
+                            Texts separeted with '. '.
+            Output:
+                a data frame: id, column names concatenated on first five letters.
+                example: 'title', 'objective' -> 'title_objec'
+            """
         return self._df_merged_columns
 
     @filter_data.setter
@@ -97,11 +89,10 @@ class ConcreteBuilderProcessProjectData(DataIface):
             self._df_merged_columns.to_csv(self.path_data_internal_txt + 'merged_project_text')
             self._df_merged_columns[proj_id] = df[proj_id]
 
-    ''' Convert all the xslx to csv and store them to 'internal' directory '''
-
     def _read_xslx(self):
+        """ Convert all the xslx to csv and store them to 'internal' directory """
         for file_name in self.datasets_name_list:
-            xl_file = os.path.join(files_path, file_name)
+            xl_file = os.path.join(self.files_path, file_name)
             read_xl_file = pd.read_excel(xl_file)
             yield file_name, read_xl_file
 
@@ -126,10 +117,10 @@ class ConcreteBuilderProcessProjectData(DataIface):
             print("Dataframe of CSV stored to txt files.")
 
     def dump_data(self, data_format):
+        """extract the data based on the format using methods doing this role, csv, txt"""
         if data_format == 'xslx':
             self._xslx_dump_to_csv()
             self._df_to_txt()
             self._reset()
         else:
             raise ValueError(data_format)
-

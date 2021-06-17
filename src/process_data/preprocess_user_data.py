@@ -55,7 +55,7 @@ class UserDataProcessing:
             data = UserDataProcessing._read_user_data(self, data_dir)
             # Preprocess training and test data to obtain words for each review
             for user_file in os.listdir(txt_data_dir):
-                cleaned_cv = module_clean.cleaning_data(self, data['train'][user_file][0])
+                cleaned_cv = module_clean.cleaning_data(data['train'][user_file][0])
                 words_train.append(cleaned_cv)
                 # words_train.append(data['train'][user_file][0])
                 # Write to cache file for future runs
