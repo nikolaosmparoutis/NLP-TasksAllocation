@@ -5,7 +5,7 @@
 
 import pandas as pd
 import os.path
-import preprocess_datasets_interface as DataIface
+from preprocess_datasets_interface import BuilderPreprocessDatasets
 
 
 def _read_CSVs(store_path, datasets_names):
@@ -23,7 +23,7 @@ def _read_CSVs(store_path, datasets_names):
     return d
 
 
-class BuilderPreprocessDataset(DataIface.BuilderPreprocessDataset):
+class BuilderPreprocessProjects(BuilderPreprocessDatasets):
 
     def __init__(self, datasets_name_list, files_path, path_data_internal, path_data_internal_txt):
         self.datasets_name_list = datasets_name_list
@@ -36,7 +36,7 @@ class BuilderPreprocessDataset(DataIface.BuilderPreprocessDataset):
     @classmethod
     def _reset(cls):  # TODO : make it clear
         cls.instance = None
-        cls.instance = BuilderPreprocessDataset(
+        cls.instance = BuilderPreprocessProjects(
             None,
             None,
             None,
@@ -102,7 +102,7 @@ class BuilderPreprocessDataset(DataIface.BuilderPreprocessDataset):
         csv_path = os.path.join(self.path_data_internal, prefix_name + '.csv')
         read_xl_file.to_csv(csv_path, index=None, header=True)
 
-    def _df_to_txt(self):
+    def _df_dump_to_txt(self):
         """ df with filtered and merged data to txt"""
         for file_name in os.listdir(self.path_data_internal_txt):
             if file_name is not None:
@@ -120,7 +120,7 @@ class BuilderPreprocessDataset(DataIface.BuilderPreprocessDataset):
         """extract the data based on the format using methods doing this role, csv, txt"""
         if data_format == 'xslx':
             self._xslx_dump_to_csv()
-            self._df_to_txt()
+            self._df_dump_to_txt()
             self._reset()
         else:
             raise ValueError(data_format)

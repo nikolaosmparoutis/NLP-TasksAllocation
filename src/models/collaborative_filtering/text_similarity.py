@@ -3,7 +3,7 @@ import spacy
 nlp = spacy.load('en_core_web_sm')
 
 from src.process_data.process_dataset import Builder_ProcessDatasetProject
-from src.process_data.preprocess_user_data import UserDataProcessing
+from src.process_data.builder_preprocess_userdata import UserDataProcessing
 import os
 
 execute_module = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/src/process_data/scrap_users_data.py'

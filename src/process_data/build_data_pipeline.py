@@ -1,5 +1,6 @@
 from director_data_pipeline import DirectorOfData
-from builder_preprocess_dataset import BuilderPreprocessDataset
+from builder_preprocess_dataset import BuilderPreprocessProjects
+from builder_preprocess_userdata import BuilderPreprocessUsers
 
 if __name__ == "__main__":
     """
@@ -14,10 +15,14 @@ if __name__ == "__main__":
     path_data_internal_txt = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal/txt/'
 
     director = DirectorOfData()
-    builder = BuilderPreprocessDataset(
-                datasets_name_list,
-                files_path,
-                path_data_internal,
-                path_data_internal_txt
-                )
-    director.builder = builder
+    builder_preprocess_dataset = BuilderPreprocessProjects(
+        datasets_name_list,
+        files_path,
+        path_data_internal,
+        path_data_internal_txt
+    )
+    director.builder = builder_preprocess_dataset
+    director.build_preprocess_data_pipeline(data_format='xslx')
+
+    builder_preprocess_userdata = BuilderPreprocessUsers() #TODO
+    director.build_preprocess_userdata()# TODO

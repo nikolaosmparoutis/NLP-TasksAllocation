@@ -12,26 +12,19 @@ class DirectorOfData:
         self._builder = None
 
     @property
-    def builder(self):
-        return self._builder()
+    def builder(self)->BuilderPreprocessDataset:
+        return self._builder
 
     @builder.setter
     def builder(self, builder):  # BuilderPreprocessDatasetsources
         self._builder = builder
 
-    def build_preprocess_dataset(self):
-        data_format = 'xlsx'
+    def build_preprocess_data_pipeline(self, data_format):
+
         self.builders.client_load_datasource(data_format)
         self.builders.filter_data(proj_id='id', keep_columns=['title', 'objective'])
         self.builders.dump_data(data_format)
 
-    def build_datapipeline_user(self):
+    def build_preprocess_userdata(self):
         pass
 
-
-director = DirectorOfData()
-builder_project_data = BuilderPreprocessDataset(datasets_name_list,
-                                                files_path,
-                                                path_data_internal,
-                                                path_data_internal_txt)
-director.builder = builder_project_data

@@ -1,4 +1,3 @@
-
 import pandas as pd
 import os
 import src.process_data.clean_data as module_clean
@@ -8,19 +7,32 @@ cache_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/final_pr
 utils_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/utils'
 
 
-class UserDataProcessing:
-
-    def _read_user_data(self, data_dir):
-        data = {}
-        data['train'] = {}
-        for user_file in os.listdir(data_dir):
-            data['train'][user_file] = []
-            txt_file = os.path.join(txt_data_dir, user_file)
-            with open(txt_file) as user_info:
-                data['train'][user_file].append(user_info.read())
-        return data
+def _read_user_data(data_dir):
+    data = {}
+    data['train'] = {}
+    for user_file in os.listdir(data_dir):
+        data['train'][user_file] = []
+        txt_file = os.path.join(txt_data_dir, user_file)
+        with open(txt_file) as user_info:
+            data['train'][user_file].append(user_info.read())
+    return data
 
 
+class BuilderPreprocessUsers:
+
+    def __init__(self, txt_data_dir, cache_dir, utils_dir):
+        self.txt_data_dir = txt_data_dir
+        self.cache_dir = cache_dir
+        self.utils_dir = utils_dir
+        self._reset()
+
+    @classmethod
+    def _reset(cls):  # TODO : make it clear
+        cls.instance = None
+        cls.instance = BuilderPreprocessUsers(
+            None,
+            None,
+            None)
 
     """
     Stores the text files from users to compressed file format; read from cache if available.
@@ -32,6 +44,7 @@ class UserDataProcessing:
     Return: 
         Dictionary of dataframes with data ( which will be used for trainning, testing, eval or processing)
     """
+
     def preprocess_user_data(self, data_dir=txt_data_dir, cache_dir=cache_dir, cache_file="preprocessed_data.pkl"):
         words_train = []
         import pickle
@@ -52,7 +65,7 @@ class UserDataProcessing:
 
         # If cache data is missing, then do the heavy lifting and store them
         if cache_data is None:
-            data = UserDataProcessing._read_user_data(self, data_dir)
+            data = _read_user_data(data_dir)
             # Preprocess training and test data to obtain words for each review
             for user_file in os.listdir(txt_data_dir):
                 cleaned_cv = module_clean.cleaning_data(data['train'][user_file][0])
