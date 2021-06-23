@@ -1,5 +1,5 @@
-from preprocess_datasets_interface import BuilderPreprocessDataset as BuilderPreprocessDatasetsources
-from builder_preprocess_dataset import BuilderPreprocessDataset
+from preprocess_datasets_interface import BuilderPreprocessDatasets
+
 
 class DirectorOfData:
     """
@@ -12,19 +12,19 @@ class DirectorOfData:
         self._builder = None
 
     @property
-    def builder(self)->BuilderPreprocessDataset:
+    def builder(self) -> BuilderPreprocessDatasets:
         return self._builder
 
     @builder.setter
     def builder(self, builder):  # BuilderPreprocessDatasetsources
         self._builder = builder
 
-    def build_preprocess_data_pipeline(self, data_format):
+    def build_preprocess_project(self, data_format):
+        self.builder.filter_data(proj_id='id', keep_columns=['title', 'objective'])
+        self.builder.dump_data(data_format = data_format)
 
-        self.builders.client_load_datasource(data_format)
-        self.builders.filter_data(proj_id='id', keep_columns=['title', 'objective'])
-        self.builders.dump_data(data_format)
-
-    def build_preprocess_userdata(self):
-        pass
-
+    def build_preprocess_userdata(self, **data_metainfo):
+        self.builder.filter_data(cache_file_preproc=data_metainfo['cache_file_preproc'],
+                                 cache_file_bow=data_metainfo['cache_file_bow'])
+        self.builder.dump_data(cache_file_preproc=data_metainfo['cache_file_preproc'],
+                               cache_file_bow=data_metainfo['cache_file_bow'])

@@ -34,7 +34,7 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
         self._reset()
 
     @classmethod
-    def _reset(cls):  # TODO : make it clear
+    def _reset(cls):
         cls.instance = None
         cls.instance = BuilderPreprocessProjects(
             None,
@@ -49,7 +49,7 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
     # creator
     def _get_dataset_type(self, data_format):
         if data_format == 'xlsx':
-            return self.dump_data(data_format)
+            return self.dump_data(data_format=data_format)
         else:
             raise ValueError(data_format)
 
@@ -116,11 +116,11 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
         else:
             print("Dataframe of CSV stored to txt files.")
 
-    def dump_data(self, data_format):
+    def dump_data(self, **data_metainfo):
         """extract the data based on the format using methods doing this role, csv, txt"""
-        if data_format == 'xslx':
+        if data_metainfo['data_format'] == 'xslx':
             self._xslx_dump_to_csv()
             self._df_dump_to_txt()
             self._reset()
         else:
-            raise ValueError(data_format)
+            raise ValueError(data_metainfo['data_format'])

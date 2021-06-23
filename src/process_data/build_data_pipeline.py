@@ -8,21 +8,31 @@ if __name__ == "__main__":
     initiates the construction process. The end result is retrieved from the
     builder object.
     """
+    director = DirectorOfData()
 
     datasets_name_list = ['Projects_datasets.xlsx', 'Projects2.xlsx']
     files_path = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/raw'
     path_data_internal = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal'
     path_data_internal_txt = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/internal/txt/'
 
-    director = DirectorOfData()
-    builder_preprocess_dataset = BuilderPreprocessProjects(
+    builder_preprocess_project_data = BuilderPreprocessProjects(
         datasets_name_list,
         files_path,
         path_data_internal,
         path_data_internal_txt
     )
-    director.builder = builder_preprocess_dataset
-    director.build_preprocess_data_pipeline(data_format='xslx')
+    director.builder = builder_preprocess_project_data
+    director.build_preprocess_project(data_format='xslx')
 
-    builder_preprocess_userdata = BuilderPreprocessUsers() #TODO
-    director.build_preprocess_userdata()# TODO
+    txt_data_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/external/txt'
+    cache_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/data/final_processed'
+    utils_dir = '/home/nikoscf/PycharmProjects/PM-Tasks-Allocation-NLP/utils'
+
+    builder_preprocess_userdata = BuilderPreprocessUsers(
+        txt_data_dir,
+        cache_dir,
+        utils_dir)
+    director.builder = builder_preprocess_userdata
+    director.build_preprocess_userdata(
+        cache_file_preproc="preprocessed_data.pkl",
+        cache_file_bow='bow_features.pkl')

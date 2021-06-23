@@ -24,12 +24,14 @@ class BuilderPreprocessDatasets(metaclass=abc.ABCMeta):
 
     @filter_data.setter
     @abc.abstractmethod
-    def filter_data(self, value: tuple):  # (column_id: str, keep_columns:list)
+    def filter_data(self, **value: tuple):  # (column_id: str, keep_columns:list)
+        """Responsible for actions as: Filtering the most iportant features,
+        or Preprocessing data"""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def dump_data(self, data_format):
-        """Extract text from the data set"""
+    def dump_data(self, **data_metainfo):
+        """Dump preprocessed data"""
         raise NotImplementedError
 
 
