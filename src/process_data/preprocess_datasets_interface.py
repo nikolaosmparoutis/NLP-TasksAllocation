@@ -24,7 +24,7 @@ class BuilderPreprocessDatasets(metaclass=abc.ABCMeta):
 
     @filter_data.setter
     @abc.abstractmethod
-    def filter_data(self, **value: tuple):  # (column_id: str, keep_columns:list)
+    def filter_data(self, **value):  # column_id: str, keep_columns:list
         """Responsible for actions as: Filtering the most iportant features,
         or Preprocessing data"""
         raise NotImplementedError

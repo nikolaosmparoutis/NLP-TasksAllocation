@@ -115,7 +115,7 @@ class BuilderPreprocessUsers(BuilderPreprocessDatasets):
         if self.cache_data is None:
             from sklearn.feature_extraction.text import TfidfVectorizer
 
-            tfidf_vectorizer = TfidfVectorizer(use_idf=True)
+            tfidf_vectorizer = TfidfVectorizer(use_idf=True, max_features=vocabulary_size)
             tfidf_vectorizer_vectors = tfidf_vectorizer.fit_transform(self.words_train)
 
             # place tf-idf values for each document in a pandas data frame

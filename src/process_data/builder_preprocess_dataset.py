@@ -55,6 +55,10 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
 
     @property
     def filter_data(self):
+        return self._df_merged_columns
+
+    @filter_data.setter
+    def filter_data(self, **values):
         """
             Now we want to take as much as useful data in a form of text as possible.
             This method from a selection of columns concatenates their text into one column,
@@ -70,11 +74,7 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
                 a data frame: id, column names concatenated on first five letters.
                 example: 'title', 'objective' -> 'title_objec'
             """
-        return self._df_merged_columns
-
-    @filter_data.setter
-    def filter_data(self, filter_columns):
-        proj_id, keep_columns = filter_columns[0], filter_columns[1:]
+        proj_id, keep_columns = values['proj_id'], values['keep_columns']
         short_header = [first_n[0:5] for first_n in keep_columns]  # create header:concat first 5 letters of each column
         column_name = '_'.join(short_header)
         all_columns = [proj_id] + [column_name]

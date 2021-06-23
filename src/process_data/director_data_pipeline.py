@@ -19,12 +19,10 @@ class DirectorOfData:
     def builder(self, builder):  # BuilderPreprocessDatasetsources
         self._builder = builder
 
-    def build_preprocess_project(self, data_format):
-        self.builder.filter_data(proj_id='id', keep_columns=['title', 'objective'])
-        self.builder.dump_data(data_format = data_format)
+    def build_preprocess_project(self, **data_metainfo):
+        self.builder.filter_data(**data_metainfo)
+        self.builder.dump_data(**data_metainfo)
 
     def build_preprocess_userdata(self, **data_metainfo):
-        self.builder.filter_data(cache_file_preproc=data_metainfo['cache_file_preproc'],
-                                 cache_file_bow=data_metainfo['cache_file_bow'])
-        self.builder.dump_data(cache_file_preproc=data_metainfo['cache_file_preproc'],
-                               cache_file_bow=data_metainfo['cache_file_bow'])
+        self.builder.filter_data(**data_metainfo)
+        self.builder.dump_data(**data_metainfo)
