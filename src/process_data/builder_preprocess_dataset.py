@@ -36,11 +36,11 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
     @classmethod
     def _reset(cls):
         cls.instance = None
-        cls.instance = BuilderPreprocessProjects(
-            None,
-            None,
-            None,
-            None)
+        # cls.instance = BuilderPreprocessProjects(
+        #     None,
+        #     None,
+        #     None,
+        #     None)
 
     def client_load_datasource(self, data_format):
         dataset_type = self._get_dataset_type(data_format)
@@ -53,11 +53,6 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
         else:
             raise ValueError(data_format)
 
-    @property
-    def filter_data(self):
-        return self._df_merged_columns
-
-    @filter_data.setter
     def filter_data(self, **values):
         """
             Now we want to take as much as useful data in a form of text as possible.
@@ -89,18 +84,17 @@ class BuilderPreprocessProjects(BuilderPreprocessDatasets):
             self._df_merged_columns.to_csv(self.path_data_internal_txt + 'merged_project_text')
             self._df_merged_columns[proj_id] = df[proj_id]
 
-    def _read_xslx(self):
-        """ Convert all the xslx to csv and store them to 'internal' directory """
-        for file_name in self.datasets_name_list:
-            xl_file = os.path.join(self.files_path, file_name)
-            read_xl_file = pd.read_excel(xl_file)
-            yield file_name, read_xl_file
-
     def _xslx_dump_to_csv(self):
-        file_name, read_xl_file = self._read_xslx()
-        prefix_name = os.path.splitext(file_name)[0]
-        csv_path = os.path.join(self.path_data_internal, prefix_name + '.csv')
-        read_xl_file.to_csv(csv_path, index=None, header=True)
+        """ Convert all the xslx to csv and store them to 'internal' directory """
+        try:
+            for file_name in self.datasets_name_list:
+                xl_file = os.path.join(self.files_path, file_name)
+                df_xl = pd.read_excel(xl_file)
+                prefix_names = os.path.splitext(file_name)[0]
+                csv_path = os.path.join(self.path_data_internal, prefix_names + '.csv')
+                df_xl.to_csv(csv_path)
+        except FileNotFoundError:
+            print('Invalid path or files')
 
     def _df_dump_to_txt(self):
         """ df with filtered and merged data to txt"""

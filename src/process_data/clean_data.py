@@ -1,9 +1,9 @@
 # python -m spacy download en_core_web_sm
 # To updates the stopwords and punktuation uncomment:
-import nltk
-
-nltk.download("stopwords")
-nltk.download('punkt')
+# import nltk
+#
+# nltk.download("stopwords")
+# nltk.download('punkt')
 
 import spacy
 nlp = spacy.load('en_core_web_sm')

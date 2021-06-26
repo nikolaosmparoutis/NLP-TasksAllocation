@@ -20,7 +20,7 @@ class DirectorOfData:
         self._builder = builder
 
     def build_preprocess_project(self, **data_metainfo):
-        self.builder.filter_data(**data_metainfo)
+        self.builder.filter_data = data_metainfo
         self.builder.dump_data(**data_metainfo)
 
     def build_preprocess_userdata(self, **data_metainfo):
